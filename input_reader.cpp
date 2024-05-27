@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iterator>
 
+#include <vector>
 /**
  * Парсит строку вида "10.123,  -30.1837" и возвращает пару координат (широта, долгота)
  */
@@ -103,5 +104,30 @@ void InputReader::ParseLine(std::string_view line) {
 }
 
 void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) const {
-    
+    for(auto command : commands_){
+        if(!command){
+            continue;
+        }
+        if(command.command == catalogue.stop_cmd){
+            catalogue.AddStop({command.id,ParseCoordinates(command.description)});
+        }else{
+            continue;
+        }
+    }
+    for(auto command : commands_){
+        if(!command){
+            continue;
+        }
+        if(command.command == catalogue.bus_cmd){
+            Bus bus_temp;
+            std::vector<std::string_view> stop_list = ParseRoute(command.description);
+            bus_temp.name = command.id;
+            for(auto stop : stop_list){
+                bus_temp.stops.push_back(catalogue.FindStop(stop));
+            } 
+            catalogue.AddBus(std::move(bus_temp));
+        }else{
+            continue;
+        }
+    }
 }
