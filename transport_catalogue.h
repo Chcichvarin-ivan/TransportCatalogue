@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 00:22:46
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-05-26 23:12:14
+ * @LastEditTime: 2024-05-30 23:29:17
  * @FilePath: /TransportCatalogue/transport_catalogue.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,6 +11,7 @@
 #include "geo.h"
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 struct Stop{
     std::string name;
@@ -19,6 +20,7 @@ struct Stop{
 struct Bus{
     std::string name;
     std::vector<Stop*> stops;
+    double route_length;
 };
 
 class TransportCatalogue {
@@ -31,8 +33,13 @@ public:
 
     Stop* FindStop(std::string_view in_stop_name);
     Bus*  FindBus(std::string_view in_bus_name);
-    
 
+    const Bus*  FindBus(const std::string_view in_bus_name)const;
+    const Stop* FindStop(const std::string_view in_stop_name)const;
+
+    std::unordered_set<const Stop*> GetUniqueStops(const Bus* bus);
+    size_t GetUniqueStopsCount(const Bus* bus)const;
+    double ComputeRouteLength(const Bus* bus)const;
 private:
     std::deque<Stop> stops_;
 	std::unordered_map<std::string_view, Stop*> name_to_stop_;

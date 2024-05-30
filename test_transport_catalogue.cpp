@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 15:42:49
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-05-27 23:47:53
+ * @LastEditTime: 2024-05-30 23:56:23
  * @FilePath: /TransportCatalogue/test_trancport_catalogue.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,34 +10,10 @@
 #include "input_reader.h"
 #include "test_transport_catalogue.h"
 #include "transport_catalogue.h"
+#include <sstream>
+#include "stat_reader.h"
+
 using namespace std;
-
-
-/**
- * Splits the given string_view into sub string_views using the given delimiter
- * @param strv std::string_view to split into parts
- * @param delim Delimiter
- * @return On success a vector of string_views is returned, otherwise an empty vector
- */
-inline std::vector<std::string_view> string_view_split(const std::string_view& strv, const std::string& delim)
-{
-    std::vector<std::string_view> result;
-    std::string_view strv_cpy(strv);
-    size_t pos = strv_cpy.find(delim);
-    if(pos == 0) { result.emplace_back(std::string_view()); }
-    while( pos != std::string_view::npos )
-    {
-        if( pos > 0)
-        { result.emplace_back(strv_cpy.substr(0, pos)); }
-        strv_cpy = strv_cpy.substr(pos + 1);
-        pos = strv_cpy.find(delim);
-    }
-    
-    if( !strv_cpy.empty() )
-    { result.emplace_back(strv_cpy); }
-    
-    return result;
-}
 
 void AssertImpl(bool value, const string& expr_str, const string& file, const string& func, unsigned line,
                 const string& hint) {
@@ -209,11 +185,58 @@ void TestInputReader(){
     ASSERT_HINT((catalogue.FindBus("256")->stops.at(3)->name == "Biryulyovo Tovarnaya"),"Fourth stop of the 256 Bus route should be Biryulyovo Tovarnaya");
     ASSERT_HINT((catalogue.FindBus("256")->stops.at(4)->name == "Biryulyovo Passazhirskaya"),"Fifth stop of the 256 Bus route should be Biryulyovo Passazhirskaya");
     ASSERT_HINT((catalogue.FindBus("256")->stops.at(5)->name == "Biryulyovo Zapadnoye"),"Last stop of the 256 Bus route should be Biryulyovo Zapadnoye");
+
+    ASSERT_HINT((catalogue.FindBus("750")->name == "750"),"There shold be 750 Bus");
+    ASSERT_HINT((catalogue.FindBus("750")->stops.size() == 5),"There shold be 5 stops in 750 Bus route");
+    ASSERT_HINT((catalogue.FindBus("750")->stops.at(0)->name == "Tolstopaltsevo"),"First stop of the 750 Bus route should be Tolstopaltsevo");
+    ASSERT_HINT((catalogue.FindBus("750")->stops.at(1)->name == "Marushkino"),"Second stop of the 750 Bus route should be Marushkino");
+    ASSERT_HINT((catalogue.FindBus("750")->stops.at(2)->name == "Rasskazovka"),"Third stop of the 750 Bus route should be Rasskazovka");
+    ASSERT_HINT((catalogue.FindBus("750")->stops.at(3)->name == "Marushkino"),"Fourth stop of the 750 Bus route should be Marushkino");
+    ASSERT_HINT((catalogue.FindBus("750")->stops.at(4)->name == "Tolstopaltsevo"),"Fifth stop of the 750 Bus route should be Tolstopaltsevo");
 }
+
+void TestParseAndPrintStat(void){
+    static constexpr std::string_view input = {"Stop Tolstopaltsevo: 55.611087, 37.208290\nStop Marushkino: 55.595884, 37.209755\nBus 256: Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\nBus 750: Tolstopaltsevo - Marushkino - Rasskazovka\nStop Rasskazovka: 55.632761, 37.333324\nStop Biryulyovo Zapadnoye: 55.574371, 37.651700\nStop Biryusinka: 55.581065, 37.648390\nStop Universam: 55.587655, 37.645687\nStop Biryulyovo Tovarnaya: 55.592028, 37.653656\nStop Biryulyovo Passazhirskaya: 55.580999, 37.659164"};
+    auto lines = string_view_split(input, "\n");
+    TransportCatalogue catalogue;
+    InputReader reader;
+    
+    for(auto line : lines){
+        reader.ParseLine(line);
+    }
+    
+    reader.ApplyCommands(catalogue);
+
+    {
+        static constexpr std::string_view input_cmd = {"Bus 256"};
+        ostringstream output;
+        ParseAndPrintStat(catalogue, input_cmd, output);
+        string str = output.str();
+        ASSERT_HINT(( str == "Bus 256: 6 stops on route, 5 unique stops, 4371.02 route length\n"),"output for 256 bus doesn't match");
+    }
+
+    {
+        static constexpr std::string_view input_cmd = {"Bus 750"};
+        ostringstream output;
+        ParseAndPrintStat(catalogue, input_cmd, output);
+        ASSERT_HINT((output.str() == "Bus 750: 5 stops on route, 3 unique stops, 20939.5 route length\n"),"output for 750 bus doesn't match");
+    }
+     
+   {
+        static constexpr std::string_view input_cmd = {"Bus 751"};
+        ostringstream output;
+        ParseAndPrintStat(catalogue, input_cmd, output);
+        ASSERT_HINT((output.str() == "Bus 751: not found\n"),"output for 751 bus doesn't match");
+    }
+   
+    
+}
+
 // Функция TestTranspotCatalogue является точкой входа для запуска тестов
 void TestTranspotCatalogue(void){
     RUN_TEST(TestAddStopToTheCatalogue);
     RUN_TEST(TestAddBusToTheCatalogue);
     RUN_TEST(TestInputReader);
+    RUN_TEST(TestParseAndPrintStat);
 }
 // --------- Окончание модульных тестов поисковой системы -----------
