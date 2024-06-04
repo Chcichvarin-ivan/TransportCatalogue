@@ -5,10 +5,13 @@
 #include <iterator>
 
 #include <vector>
+
+namespace transport_catalogue {
+namespace detail {
 /**
  * Парсит строку вида "10.123,  -30.1837" и возвращает пару координат (широта, долгота)
  */
-Coordinates ParseCoordinates(std::string_view str) {
+geo::Coordinates ParseCoordinates(std::string_view str) {
     static const double nan = std::nan("");
 
     auto not_space = str.find_first_not_of(' ');
@@ -138,3 +141,6 @@ void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) 
         }
     }
 }
+
+}//end namespace transport_catalogue 
+}//end namespace detail 

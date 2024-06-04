@@ -2,13 +2,15 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 00:22:22
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-06-04 18:51:38
+ * @LastEditTime: 2024-06-04 23:00:38
  * @FilePath: /TransportCatalogue/transport_catalogue.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 #include "geo.h"
 #include <stdexcept>
 #include "transport_catalogue.h"
+
+namespace transport_catalogue {  
 
 void TransportCatalogue::AddStop(Stop&& in_stop){
    stops_.push_back(std::move(in_stop));
@@ -89,7 +91,7 @@ double TransportCatalogue::ComputeRouteLength(const Bus* bus)const{
 
    auto stops_number = bus->stops.size() - 1;
     for (size_t iterator = 0; iterator < stops_number; iterator++) {
-        route_length += ComputeDistance(bus->stops.at(iterator)->coordinates, bus->stops.at(iterator+1)->coordinates);
+        route_length += detail::geo::ComputeDistance(bus->stops.at(iterator)->coordinates, bus->stops.at(iterator+1)->coordinates);
     }
     return route_length;
 }
@@ -101,3 +103,5 @@ std::unordered_set<const Bus*> TransportCatalogue::GetUniqueBuses(const Stop* st
 
    return unique_buses;
 }
+
+}//end namespace transport_catalogue   

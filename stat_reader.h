@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 00:21:59
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-06-04 15:50:12
+ * @LastEditTime: 2024-06-04 22:53:14
  * @FilePath: /TransportCatalogue/stat_reader.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,6 +12,8 @@
 #include <string_view>
 
 #include "transport_catalogue.h"
+namespace transport_catalogue {
+namespace detail {
 
 /**
  * Splits the given string_view into sub string_views using the given delimiter
@@ -39,6 +41,7 @@ inline std::vector<std::string_view> string_view_split(const std::string_view& s
     return result;
 }
 
+namespace bus{
 struct BusQueryResult{
     std::string_view name;
     bool not_found;
@@ -47,16 +50,26 @@ struct BusQueryResult{
     double route_length;
 };
 
+BusQueryResult ProcessBusQuery(const TransportCatalogue& tansport_catalogue, std::string_view bus_query);
+}//namespace bus
+
+namespace stop{
 struct StopQueryResult{
     std::string_view name;
     bool not_found;
     std::vector <std::string_view> buses_names;
 };
 
+StopQueryResult ProcessStopQuery(const TransportCatalogue& tansport_catalogue, std::string_view stop_query);
+}//end namespace stop
 
-BusQueryResult process_query(const TransportCatalogue& catalogue, std::string_view str);
 
-void print_result(BusQueryResult bus_info, std::ostream& output);
+
+void print_result(bus::BusQueryResult bus_info, std::ostream& output);
+
+void print_result(stop::StopQueryResult stop_info, std::ostream& output);
 
 void ParseAndPrintStat(const TransportCatalogue& tansport_catalogue, std::string_view request,
                        std::ostream& output);
+}//end namespace detail 
+}//end namespace transport_catalogue

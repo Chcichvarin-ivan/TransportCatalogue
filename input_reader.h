@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 00:21:35
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-05-26 00:21:38
+ * @LastEditTime: 2024-06-04 22:21:57
  * @FilePath: /TransportCatalogue/input_reader.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,7 +13,8 @@
 
 #include "geo.h"
 #include "transport_catalogue.h"
-
+namespace transport_catalogue {
+namespace detail {  
 struct CommandDescription {
     // Определяет, задана ли команда (поле command непустое)
     explicit operator bool() const {
@@ -44,3 +45,6 @@ public:
 private:
     std::vector<CommandDescription> commands_;
 };
+
+}//end namespace detail 
+}//end namespace transport_catalogue

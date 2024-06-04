@@ -2,14 +2,16 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 00:21:09
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-05-26 00:24:28
+ * @LastEditTime: 2024-06-04 22:11:31
  * @FilePath: /TransportCatalogue/geo.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 #pragma once
-
 #include <cmath>
 
+namespace transport_catalogue {
+namespace detail {
+namespace geo {
 struct Coordinates {
     double lat;
     double lng;
@@ -31,3 +33,7 @@ inline double ComputeDistance(Coordinates from, Coordinates to) {
                 + cos(from.lat * dr) * cos(to.lat * dr) * cos(abs(from.lng - to.lng) * dr))
         * 6371000;
 }
+
+}//end namespace geo
+}//end namespace detail
+}//end namespace transport_catalogue

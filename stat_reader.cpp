@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 00:23:30
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-06-04 19:25:14
+ * @LastEditTime: 2024-06-04 23:43:21
  * @FilePath: /TransportCatalogue/stat_reader.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,8 +11,10 @@
 #include <iomanip>
 #include "stat_reader.h"
 
-using namespace std;
+namespace transport_catalogue { 
+namespace detail {
 
+namespace bus {
 BusQueryResult ProcessBusQuery(const TransportCatalogue& tansport_catalogue, std::string_view bus_query){
     BusQueryResult ret_val;
 
@@ -29,6 +31,20 @@ BusQueryResult ProcessBusQuery(const TransportCatalogue& tansport_catalogue, std
     return ret_val;
 }
 
+void print_result(BusQueryResult bus_info, std::ostream& output){
+
+    if(!bus_info.not_found){
+        output << "Bus " << bus_info.name << ": "
+               << bus_info.stops_count << " stops on route, "
+               << bus_info.unique_stops_count << " unique stops, "
+               << bus_info.route_length << " route length" << std::endl;
+    }else{
+        output << "Bus " << bus_info.name << ": not found" << std::endl;
+    }
+
+}
+}//end namespace bus
+namespace stop{
 StopQueryResult ProcessStopQuery(const TransportCatalogue& tansport_catalogue, std::string_view stop_query){
     StopQueryResult ret_val;
 
@@ -52,20 +68,6 @@ StopQueryResult ProcessStopQuery(const TransportCatalogue& tansport_catalogue, s
     return ret_val;
 }
 
-
-void print_result(BusQueryResult bus_info, std::ostream& output){
-
-    if(!bus_info.not_found){
-        output << "Bus " << bus_info.name << ": "
-               << bus_info.stops_count << " stops on route, "
-               << bus_info.unique_stops_count << " unique stops, "
-               << bus_info.route_length << " route length" << std::endl;
-    }else{
-        output << "Bus " << bus_info.name << ": not found" << std::endl;
-    }
-
-}
-
 void print_result(StopQueryResult stop_info, std::ostream& output){
     if(!stop_info.not_found){
        if(stop_info.buses_names.size() != 0){
@@ -82,14 +84,17 @@ void print_result(StopQueryResult stop_info, std::ostream& output){
         output << "Stop " << stop_info.name << ": not found" << std::endl;
     }
 }
-
+}//end namespace bus 
 
 void ParseAndPrintStat(const TransportCatalogue& tansport_catalogue, std::string_view request, std::ostream& output) {
     auto request_componets = string_view_split(request, " ");
     if(request_componets.at(0)=="Bus"){
-        print_result(ProcessBusQuery(tansport_catalogue, request.substr(request_componets.at(0).size()+1)),output);
+        bus::print_result(bus::ProcessBusQuery(tansport_catalogue, request.substr(request_componets.at(0).size()+1)),output);
     }else if(request_componets.at(0)=="Stop"){
-        print_result(ProcessStopQuery(tansport_catalogue, request.substr(request_componets.at(0).size()+1)),output); 
+        stop::print_result(stop::ProcessStopQuery(tansport_catalogue, request.substr(request_componets.at(0).size()+1)),output); 
 
     }
 }
+
+} //end namespace transport_catalogue  
+} // end namespace detail 

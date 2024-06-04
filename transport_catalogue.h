@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 00:22:46
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-06-04 18:49:13
+ * @LastEditTime: 2024-06-04 23:14:05
  * @FilePath: /TransportCatalogue/transport_catalogue.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,11 +13,11 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
+namespace transport_catalogue { 
 struct Bus;
 struct Stop{
     std::string name;
-    Coordinates coordinates;
+    detail::geo::Coordinates coordinates;
     
     std::vector<Bus*> buses;
 };
@@ -51,3 +51,4 @@ private:
     std::deque<Bus> buses_;
     std::unordered_map<std::string_view, Bus*> name_to_bus_;
 };
+}//namespace transport_catalogue 
