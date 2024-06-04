@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 00:22:46
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-05-30 23:29:17
+ * @LastEditTime: 2024-06-04 18:49:13
  * @FilePath: /TransportCatalogue/transport_catalogue.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,9 +13,13 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+
+struct Bus;
 struct Stop{
     std::string name;
     Coordinates coordinates;
+    
+    std::vector<Bus*> buses;
 };
 struct Bus{
     std::string name;
@@ -37,7 +41,8 @@ public:
     const Bus*  FindBus(const std::string_view in_bus_name)const;
     const Stop* FindStop(const std::string_view in_stop_name)const;
 
-    std::unordered_set<const Stop*> GetUniqueStops(const Bus* bus);
+    std::unordered_set<const Stop*> GetUniqueStops(const Bus* bus)const;
+    std::unordered_set<const Bus*> GetUniqueBuses(const Stop* stop)const;
     size_t GetUniqueStopsCount(const Bus* bus)const;
     double ComputeRouteLength(const Bus* bus)const;
 private:

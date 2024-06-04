@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 00:22:22
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-05-30 23:29:21
+ * @LastEditTime: 2024-06-04 18:51:38
  * @FilePath: /TransportCatalogue/transport_catalogue.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -68,21 +68,20 @@ const Stop* TransportCatalogue::FindStop(const std::string_view in_stop_name)con
    }
 }
 
-std::unordered_set<const Stop*> TransportCatalogue::GetUniqueStops(const Bus* bus) {
-    std::unordered_set<const Stop*> unique_stops;
+std::unordered_set<const Stop*> TransportCatalogue::GetUniqueStops(const Bus* bus)const{
+   std::unordered_set<const Stop*> unique_stops;
     
-    unique_stops.insert(bus->stops.begin(), bus->stops.end());
+   unique_stops.insert(bus->stops.begin(), bus->stops.end());
     
-    return unique_stops;
+   return unique_stops;
 }
 
 
 size_t TransportCatalogue::GetUniqueStopsCount(const Bus* bus) const {
-    std::unordered_set<const Stop*> unique_stops;
+   std::unordered_set<const Stop*> unique_stops;
     
-    unique_stops.insert(bus->stops.begin(), bus->stops.end());
-    
-    return size_t(unique_stops.size());
+   unique_stops.insert(bus->stops.begin(), bus->stops.end()); 
+   return size_t(unique_stops.size());
 }
 
 double TransportCatalogue::ComputeRouteLength(const Bus* bus)const{
@@ -93,4 +92,12 @@ double TransportCatalogue::ComputeRouteLength(const Bus* bus)const{
         route_length += ComputeDistance(bus->stops.at(iterator)->coordinates, bus->stops.at(iterator+1)->coordinates);
     }
     return route_length;
+}
+
+std::unordered_set<const Bus*> TransportCatalogue::GetUniqueBuses(const Stop* stop)const{
+   std::unordered_set<const Bus*> unique_buses;
+
+   unique_buses.insert(stop->buses.begin(),stop->buses.end());
+
+   return unique_buses;
 }
