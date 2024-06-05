@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 00:21:59
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-06-04 22:53:14
+ * @LastEditTime: 2024-06-05 21:25:57
  * @FilePath: /TransportCatalogue/stat_reader.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -21,7 +21,7 @@ namespace detail {
  * @param delim Delimiter
  * @return On success a vector of string_views is returned, otherwise an empty vector
  */
-inline std::vector<std::string_view> string_view_split(const std::string_view& strv, const std::string& delim)
+inline std::vector<std::string_view> StringViewSplit(const std::string_view& strv, const std::string& delim)
 {
     std::vector<std::string_view> result;
     std::string_view strv_cpy(strv);
@@ -65,9 +65,9 @@ StopQueryResult ProcessStopQuery(const TransportCatalogue& tansport_catalogue, s
 
 
 
-void print_result(bus::BusQueryResult bus_info, std::ostream& output);
+void PrintResult(bus::BusQueryResult bus_info, std::ostream& output);
 
-void print_result(stop::StopQueryResult stop_info, std::ostream& output);
+void PrintResult(stop::StopQueryResult stop_info, std::ostream& output);
 
 void ParseAndPrintStat(const TransportCatalogue& tansport_catalogue, std::string_view request,
                        std::ostream& output);

@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-26 15:42:49
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-06-04 23:16:12
+ * @LastEditTime: 2024-06-05 23:49:40
  * @FilePath: /TransportCatalogue/test_trancport_catalogue.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -67,7 +67,7 @@ void RunTestImpl(const TestFunc& func, const string& test_name) {
 void TestAddStopToTheCatalogue(){
     {
         TransportCatalogue catalogue;
-        Stop test_stop_in = {"Tolstopaltsevo",{55.611087,37.208290}, std::vector<Bus*>()};
+        Stop test_stop_in = {"Tolstopaltsevo",{55.611087,37.208290}, std::vector<const Bus*>()};
         catalogue.AddStop(move(test_stop_in));
         Stop* test_stop_out = catalogue.FindStop("Tolstopaltsevo"); 
         ASSERT_HINT((test_stop_out),"FindStop should return valid pointer");
@@ -77,7 +77,7 @@ void TestAddStopToTheCatalogue(){
     }
     {
         TransportCatalogue catalogue;
-        Stop test_stop_in = {"Tolstopaltsevo",55.611087,37.208290, std::vector<Bus*>()};
+        Stop test_stop_in = {"Tolstopaltsevo",55.611087,37.208290, std::vector<const Bus*>()};
         catalogue.AddStop(move(test_stop_in));
         test_stop_in.name = "Biryulyovo Tovarnaya";
         test_stop_in.coordinates.lat = 1;
@@ -112,7 +112,7 @@ void TestAddBusToTheCatalogue(){
         TransportCatalogue catalogue;
         Bus test_bus_in;
         test_bus_in.name = "256";
-        Stop test_stop_in = {"Tolstopaltsevo",55.611087,37.208290, std::vector<Bus*>()};
+        Stop test_stop_in = {"Tolstopaltsevo",55.611087,37.208290, std::vector<const Bus*>()};
         catalogue.AddStop(move(test_stop_in));
         test_stop_in.name = "Biryulyovo Tovarnaya";
         test_stop_in.coordinates.lat = 1;
@@ -128,7 +128,7 @@ void TestAddBusToTheCatalogue(){
 
         catalogue.AddBus(std::move(test_bus_in));
 
-        Bus* test_bus_out = catalogue.FindBus("256");
+        const Bus* test_bus_out = catalogue.FindBus("256");
 
         ASSERT_HINT((test_bus_out),"FindBus should return valid pointer");
         ASSERT_HINT((test_bus_out->stops.size() == 3),"there should be three stops in 256 Bus route");
@@ -140,7 +140,7 @@ void TestAddBusToTheCatalogue(){
 
 void TestInputReader(){
     static constexpr std::string_view input = {"Stop Tolstopaltsevo: 55.611087, 37.208290\nStop Marushkino: 55.595884, 37.209755\nBus 256: Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\nBus 750: Tolstopaltsevo - Marushkino - Rasskazovka\nStop Rasskazovka: 55.632761, 37.333324\nStop Biryulyovo Zapadnoye: 55.574371, 37.651700\nStop Biryusinka: 55.581065, 37.648390\nStop Universam: 55.587655, 37.645687\nStop Biryulyovo Tovarnaya: 55.592028, 37.653656\nStop Biryulyovo Passazhirskaya: 55.580999, 37.659164"};
-    auto lines = string_view_split(input, "\n");
+    auto lines = StringViewSplit(input, "\n");
     TransportCatalogue catalogue;
     InputReader reader;
     
@@ -203,7 +203,7 @@ void TestInputReader(){
 
 void TestInputReaderStopsVector(void){
     static constexpr std::string_view input = {"Stop Tolstopaltsevo: 55.611087, 37.208290\nStop Marushkino: 55.595884, 37.209755\nBus 256: Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\nBus 750: Tolstopaltsevo - Marushkino - Rasskazovka\nStop Rasskazovka: 55.632761, 37.333324\nStop Biryulyovo Zapadnoye: 55.574371, 37.651700\nStop Biryusinka: 55.581065, 37.648390\nStop Universam: 55.587655, 37.645687\nStop Biryulyovo Tovarnaya: 55.592028, 37.653656\nStop Biryulyovo Passazhirskaya: 55.580999, 37.659164"};
-    auto lines = string_view_split(input, "\n");
+    auto lines = StringViewSplit(input, "\n");
     TransportCatalogue catalogue;
     InputReader reader;
     
@@ -223,7 +223,7 @@ void TestInputReaderStopsVector(void){
 
 void TestParseAndPrintStat(void){
     static constexpr std::string_view input = {"Stop Tolstopaltsevo: 55.611087, 37.208290\nStop Marushkino: 55.595884, 37.209755\nBus 256: Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\nBus 750: Tolstopaltsevo - Marushkino - Rasskazovka\nStop Rasskazovka: 55.632761, 37.333324\nStop Biryulyovo Zapadnoye: 55.574371, 37.651700\nStop Biryusinka: 55.581065, 37.648390\nStop Universam: 55.587655, 37.645687\nStop Biryulyovo Tovarnaya: 55.592028, 37.653656\nStop Biryulyovo Passazhirskaya: 55.580999, 37.659164"};
-    auto lines = string_view_split(input, "\n");
+    auto lines = StringViewSplit(input, "\n");
     TransportCatalogue catalogue;
     InputReader reader;
     
@@ -368,7 +368,7 @@ void TestTsACase2Input(void){
 // test stop request
 void TestStopRequest(void){
     static constexpr std::string_view input = {"Stop Tolstopaltsevo: 55.611087, 37.20829\nStop Marushkino: 55.595884, 37.209755\nBus 256: Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\nBus 750: Tolstopaltsevo - Marushkino - Rasskazovka\nStop Rasskazovka: 55.632761, 37.333324\nStop Biryulyovo Zapadnoye: 55.574371, 37.6517\nStop Biryusinka: 55.581065, 37.64839\nStop Universam: 55.587655, 37.645687\nStop Biryulyovo Tovarnaya: 55.592028, 37.653656\nStop Biryulyovo Passazhirskaya: 55.580999, 37.659164\nBus 828: Biryulyovo Zapadnoye > Universam > Rossoshanskaya ulitsa > Biryulyovo Zapadnoye\nStop Rossoshanskaya ulitsa: 55.595579, 37.605757\nStop Prazhskaya: 55.611678, 37.603831"};
-    auto lines = string_view_split(input, "\n");
+    auto lines = StringViewSplit(input, "\n");
     TransportCatalogue catalogue;
     InputReader reader;
     

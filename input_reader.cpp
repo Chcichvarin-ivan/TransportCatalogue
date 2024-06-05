@@ -112,7 +112,7 @@ void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) 
             continue;
         }
         if(command.command == catalogue.stop_cmd){
-            catalogue.AddStop({command.id,ParseCoordinates(command.description),std::vector<Bus*>()});
+            catalogue.AddStop({command.id,ParseCoordinates(command.description),std::vector<const Bus*>()});
         }else{
             continue;
         }
@@ -131,7 +131,7 @@ void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) 
             
             catalogue.AddBus(std::move(bus_temp));
 
-            Bus* bus_p = catalogue.FindBus(command.id); 
+            const  Bus* bus_p = catalogue.FindBus(command.id); 
             for(auto stop : stop_list){
                 catalogue.FindStop(stop)->buses.push_back(bus_p);
             }
